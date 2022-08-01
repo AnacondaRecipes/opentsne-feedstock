@@ -12,7 +12,7 @@ source:
 build:
   number: 0
   script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv
-  skip: true  # [py<35]
+  skip: true  # [py<35 or s390x]
 
 requirements:
   build:
@@ -26,6 +26,7 @@ requirements:
     - fftw
     - {{ pin_compatible('numpy') }}
   run:
+    - _openmp_mutex  # [linux]
     - fftw
     - numpy
     - python
