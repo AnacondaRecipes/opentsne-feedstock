@@ -11,11 +11,12 @@ source:
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv
+  script: {{ PYTHON }} -m pip install --no-deps --ignore-installed -vv . --no-build-isolation
   skip: true  # [py<35 or s390x]
 
 requirements:
   build:
+    - {{ compiler('c') }}
     - {{ compiler('cxx') }}
   host:
     - pip
@@ -23,20 +24,25 @@ requirements:
     - setuptools
     - wheel
     - cython
-    - fftw
     - {{ pin_compatible('numpy') }}
+    - fftw 3.3.9
   run:
+    - python
     - _openmp_mutex  # [linux]
     - llvm-openmp    # [osx]
-    - fftw
-    - numpy
-    - python
+    - fftw >=3
+    - numpy {{ numpy }}
     - scikit-learn >=0.20
     - scipy
+    - pynndescent >=0.5.0,<0.6.0
 
 test:
   imports:
     - openTSNE
+  requires:
+    - pip
+  commands:
+    - pip check
 
 about:
   home: https://github.com/pavlin-policar/openTSNE
