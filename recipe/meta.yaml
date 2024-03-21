@@ -50,6 +50,8 @@ about:
   license_family: BSD
   license_file: LICENSE
   summary: Extensible, parallel implementations of t-SNE
+  description: |
+    openTSNE is a modular Python implementation of t-Distributed Stochasitc Neighbor Embedding (t-SNE), a popular dimensionality-reduction algorithm for visualizing high-dimensional data sets.
   doc_url: https://opentsne.readthedocs.io
   dev_url: https://github.com/pavlin-policar/openTSNE
 
