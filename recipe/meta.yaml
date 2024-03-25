@@ -1,5 +1,5 @@
 {% set name = "openTSNE" %}
-{% set version = "0.6.2" %}
+{% set version = "1.0.1" %}
 
 package:
   name: {{ name|lower }}
@@ -7,12 +7,12 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 92ea18afd4e34df8fb536c813c36533de892d96511f6683721003398b4fcf2e9
+  sha256: 51f4dffaa3366ee4a480dd21d5f64eb0fa677248a0c99490aeb8bf311124368c
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv
-  skip: true  # [py<35 or s390x]
+  script: {{ PYTHON }} -m pip install --no-deps --ignore-installed -vv . --no-build-isolation
+  skip: true  # [py<37 or s390x]
 
 requirements:
   build:
@@ -23,20 +23,27 @@ requirements:
     - setuptools
     - wheel
     - cython
-    - fftw
-    - {{ pin_compatible('numpy') }}
+    - numpy {{ numpy }}
+    - fftw 3.3.9
   run:
+    - python
     - _openmp_mutex  # [linux]
     - llvm-openmp    # [osx]
-    - fftw
-    - numpy
-    - python
+    - fftw # bound set through run_exports
+    - {{ pin_compatible('numpy') }}
     - scikit-learn >=0.20
     - scipy
+  run_constrained:
+    - hnswlib >=0.4.0,<0.5.0
+    - pynndescent >=0.5.0,<0.6.0
 
 test:
   imports:
     - openTSNE
+  requires:
+    - pip
+  commands:
+    - pip check
 
 about:
   home: https://github.com/pavlin-policar/openTSNE
@@ -44,6 +51,8 @@ about:
   license_family: BSD
   license_file: LICENSE
   summary: Extensible, parallel implementations of t-SNE
+  description: |
+    openTSNE is a modular Python implementation of t-Distributed Stochasitc Neighbor Embedding (t-SNE), a popular dimensionality-reduction algorithm for visualizing high-dimensional data sets.
   doc_url: https://opentsne.readthedocs.io
   dev_url: https://github.com/pavlin-policar/openTSNE
 
