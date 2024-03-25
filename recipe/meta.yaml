@@ -23,16 +23,18 @@ requirements:
     - setuptools
     - wheel
     - cython
-    - {{ pin_compatible('numpy') }}
+    - numpy {{ numpy }}
     - fftw 3.3.9
   run:
     - python
     - _openmp_mutex  # [linux]
     - llvm-openmp    # [osx]
-    - fftw >=3
-    - numpy
+    - fftw # bound set through run_exports
+    - {{ pin_compatible('numpy') }}
     - scikit-learn >=0.20
     - scipy
+  run_constrained:
+    - hnswlib >=0.4.0,<0.5.0
     - pynndescent >=0.5.0,<0.6.0
 
 test:
