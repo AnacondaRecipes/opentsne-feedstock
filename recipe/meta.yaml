@@ -1,5 +1,5 @@
-{% set name = "openTSNE" %}
-{% set version = "1.0.1" %}
+{% set name = "opentsne" %}
+{% set version = "1.0.2" %}
 
 package:
   name: {{ name|lower }}
@@ -7,16 +7,20 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 51f4dffaa3366ee4a480dd21d5f64eb0fa677248a0c99490aeb8bf311124368c
+  sha256: e2aecaa7a487100246f2d3fef9855d1bd6cc02a1c6da8fb2a54583f307aa4229
+  patches:
+    - patches/0001-fixed-test_neighbors-import.patch
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install --no-deps --ignore-installed -vv . --no-build-isolation
-  skip: true  # [py<37 or s390x]
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  skip: true  # [py<39]
 
 requirements:
   build:
     - {{ compiler('cxx') }}
+    - patch  # [not win]
+    - m2-patch  # [win]
   host:
     - pip
     - python
@@ -29,7 +33,6 @@ requirements:
     - python
     - _openmp_mutex  # [linux]
     - llvm-openmp    # [osx]
-    - fftw # bound set through run_exports
     - {{ pin_compatible('numpy') }}
     - scikit-learn >=0.20
     - scipy
@@ -38,12 +41,16 @@ requirements:
     - pynndescent >=0.5.0,<0.6.0
 
 test:
+  source_files:
+    - tests
   imports:
     - openTSNE
-  requires:
-    - pip
   commands:
     - pip check
+    - pytest -vv tests
+  requires:
+    - pip
+    - pytest
 
 about:
   home: https://github.com/pavlin-policar/openTSNE

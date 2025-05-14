@@ -1,0 +1,25 @@
+From 24cc2c1ece2714711158cae12d5c44557a76ba1c Mon Sep 17 00:00:00 2001
+From: Andrii Osipov <aosipov@anaconda.com>
+Date: Wed, 14 May 2025 01:12:29 -0700
+Subject: [PATCH] fix test import
+
+---
+ tests/test_nearest_neighbors.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tests/test_nearest_neighbors.py b/tests/test_nearest_neighbors.py
+index 641098a..64807eb 100644
+--- a/tests/test_nearest_neighbors.py
++++ b/tests/test_nearest_neighbors.py
+@@ -14,7 +14,7 @@ from sklearn.utils import check_random_state
+ 
+ from openTSNE import nearest_neighbors
+ from openTSNE.utils import is_package_installed
+-from .test_tsne import check_mock_called_with_kwargs
++from tests.test_tsne import check_mock_called_with_kwargs
+ 
+ 
+ class KNNIndexTestMixin:
+-- 
+2.39.3 (Apple Git-146)
+
