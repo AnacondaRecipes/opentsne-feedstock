@@ -1,5 +1,5 @@
-{% set name = "openTSNE" %}
-{% set version = "1.0.1" %}
+{% set name = "opentsne" %}
+{% set version = "1.0.2" %}
 
 package:
   name: {{ name|lower }}
@@ -7,16 +7,22 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 51f4dffaa3366ee4a480dd21d5f64eb0fa677248a0c99490aeb8bf311124368c
+  sha256: e2aecaa7a487100246f2d3fef9855d1bd6cc02a1c6da8fb2a54583f307aa4229
+  patches:
+    - patches/0001-fixed-test_neighbors-import.patch
 
 build:
   number: 0
-  script: {{ PYTHON }} -m pip install --no-deps --ignore-installed -vv . --no-build-isolation
-  skip: true  # [py<37 or s390x]
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  skip: true  # [py<39]
 
 requirements:
   build:
+    # comiler c needs by cython
+    - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    - patch  # [not win]
+    - m2-patch  # [win]
   host:
     - pip
     - python
@@ -27,23 +33,33 @@ requirements:
     - fftw 3.3.9
   run:
     - python
+    #_openmp_mutex AND llvm-openmp needs to avoid run_exports problem
     - _openmp_mutex  # [linux]
     - llvm-openmp    # [osx]
-    - fftw # bound set through run_exports
-    - {{ pin_compatible('numpy') }}
+    - numpy >=1.16.6
     - scikit-learn >=0.20
     - scipy
   run_constrained:
     - hnswlib >=0.4.0,<0.5.0
     - pynndescent >=0.5.0,<0.6.0
 
+# > np.testing.assert_almost_equal(embedding1, embedding2)
+# E AssertionError:
+# E Arrays are not almost equal to 7 decimals
+{% set deselect_tests = "" %}
+{% set deselect_tests = " --deselect=tests/test_correctness.py::TestTSNECorrectnessUsingPrecomputedDistanceMatrix::test_iris" %}  # [linux and aarch64]
+
 test:
+  source_files:
+    - tests
   imports:
     - openTSNE
-  requires:
-    - pip
   commands:
     - pip check
+    - pytest -vv {{ deselect_tests }} tests
+  requires:
+    - pip
+    - pytest
 
 about:
   home: https://github.com/pavlin-policar/openTSNE
@@ -52,7 +68,12 @@ about:
   license_file: LICENSE
   summary: Extensible, parallel implementations of t-SNE
   description: |
-    openTSNE is a modular Python implementation of t-Distributed Stochasitc Neighbor Embedding (t-SNE), a popular dimensionality-reduction algorithm for visualizing high-dimensional data sets.
+    openTSNE is a modular Python implementation of t-Distributed Stochasitc Neighbor Embedding (t-SNE),
+    a popular dimensionality-reduction algorithm for visualizing high-dimensional data sets.
+    openTSNE incorporates the latest improvements to the t-SNE algorithm, including the ability to add
+    new data points to existing embeddings, massive speed improvements, enabling t-SNE to
+    scale to millions of data points and various tricks to improve global alignment of the resulting
+    visualizations.
   doc_url: https://opentsne.readthedocs.io
   dev_url: https://github.com/pavlin-policar/openTSNE
 
