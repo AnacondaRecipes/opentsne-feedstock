@@ -31,6 +31,7 @@ requirements:
     - wheel
     - cython
     - numpy {{ numpy }}
+    - fftw 3.3.9
   run:
     - python
     #_openmp_mutex AND llvm-openmp needs to avoid run_exports problem
