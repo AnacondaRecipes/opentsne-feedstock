@@ -9,7 +9,7 @@ source:
   url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
   sha256: e90bf612be94fcbe06e3cab9531a58e4824661f38dd7c2e934569820d15c82ab
   patches:
-    - patches/0001-fixed-test_neighbors-import.patch
+    - patches/0001-fix-cross-module-test-imports.patch
 
 build:
   number: 0
