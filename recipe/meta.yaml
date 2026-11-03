@@ -29,7 +29,7 @@ requirements:
     - wheel
     - cython
     - numpy {{ numpy }}
-    - fftw 3.3.9
+    - fftw
     - libgomp # [linux]
     - llvm-openmp    # [osx or (win and arm64)]
     - vcomp14        # [win and x86_64]
